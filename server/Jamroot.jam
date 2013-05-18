@@ -1,0 +1,18 @@
+import testing ;
+using gcc ;
+
+project
+    : requirements <toolset>gcc
+    : requirements <cflags>"-Werror -Wall -Wextra -Wno-long-long -Weffc++ -std=c++0x"
+    : requirements <variant>release
+    : requirements <optimization>speed
+    : requirements <inlining>full
+    : requirements <include>.
+    : build-dir .build
+;
+
+exe main : main.cpp ;
+
+install dist : main : <location>build/ ;
+
+
