@@ -3,7 +3,7 @@ using gcc ;
 
 project
     : requirements <toolset>gcc
-    : requirements <cflags>"-Werror -Wall -Wextra -Wno-long-long -Weffc++ -std=c++0x"
+    : requirements <cflags>"-Werror -Wall -Wextra -Wno-long-long -std=c++0x"
     : requirements <variant>release
     : requirements <optimization>speed
     : requirements <inlining>full
@@ -11,7 +11,12 @@ project
     : build-dir .build
 ;
 
-exe main : main.cpp ;
+lib fastcgipp : : <name>fastcgipp : <link>static ;
+
+lib b_system : : <name>boost_system-mt ;
+lib b_thread : : <name>boost_thread ;
+
+exe main : [ glob *.cpp ] fastcgipp b_system b_thread ;
 
 install dist : main : <location>build/ ;
 
