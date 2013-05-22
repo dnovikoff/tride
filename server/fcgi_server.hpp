@@ -6,6 +6,8 @@
 
 #include "handler.hpp"
 
+namespace tride {
+
 class FcgiServer {
 	static FcgiServer* current;
 
@@ -25,5 +27,6 @@ public:
 	static void currentStop();
 };
 
+} // namespace tride
 
 #endif /* FCGI_SERVER_HPP_ */

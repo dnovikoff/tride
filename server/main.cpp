@@ -21,6 +21,7 @@ void error_log(const char* msg) {
 }
 
 int main() {
+	using namespace tride;
 	Signals::init();
 	std::cout << "I'am started now" << std::endl;
 	try {

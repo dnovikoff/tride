@@ -3,6 +3,8 @@
 #include "handler.hpp"
 #include "fcgi_server.hpp"
 
+namespace tride {
+
 bool Handler::response() {
 	switch (state) {
 	case START: {
@@ -43,3 +45,4 @@ Handler::Handler(): state(START) {}
 
 Handler::~Handler() {}
 
+} // namespace tride

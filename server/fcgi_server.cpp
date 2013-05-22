@@ -1,5 +1,7 @@
 #include "fcgi_server.hpp"
 
+namespace tride {
+
 FcgiServer* FcgiServer::current = NULL;
 
 FcgiServer::FcgiServer() {
@@ -30,3 +32,5 @@ boost::asio::io_service& FcgiServer::currentIo() {
 void FcgiServer::currentStop() {
 	current->stop();
 }
+
+} // namespace tride

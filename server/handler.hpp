@@ -5,6 +5,8 @@
 #include <boost/asio/deadline_timer.hpp>
 #include <fastcgi++/request.hpp>
 
+namespace tride {
+
 class Handler: public Fastcgipp::Request<char> {
 	enum State {
 		START, FINISH
@@ -15,5 +17,7 @@ public:
 	Handler();
 	virtual ~Handler();
 };
+
+} // namespace tride
 
 #endif /* HANDLER_HPP_ */
