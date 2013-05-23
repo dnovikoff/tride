@@ -4,14 +4,14 @@
 #include <boost/asio.hpp>
 #include <fastcgi++/manager.hpp>
 
-#include "handler.hpp"
+#include "request_manager.hpp"
 
 namespace tride {
 
 class FcgiServer {
 	static FcgiServer* current;
 
-	Fastcgipp::Manager<Handler> fcgi;
+	Fastcgipp::Manager<RequestManager> fcgi;
 	boost::asio::io_service service;
 	boost::scoped_ptr<boost::asio::io_service::work> work;
 	FcgiServer& operator=(const FcgiServer&);

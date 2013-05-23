@@ -1,1 +1,1 @@
-spawn-fcgi -n build/main -s build/socket.socket
+spawn-fcgi -n build/main -G www-data -U www-data -s /tmp/tride.socket

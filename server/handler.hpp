@@ -1,23 +1,36 @@
 #ifndef HANDLER_HPP_
 #define HANDLER_HPP_
 
-#include <boost/scoped_ptr.hpp>
-#include <boost/asio/deadline_timer.hpp>
-#include <fastcgi++/request.hpp>
+#include <sstream>
 
 namespace tride {
 
-class Handler: public Fastcgipp::Request<char> {
-	enum State {
-		START, FINISH
-	} state;
-	boost::scoped_ptr<boost::asio::deadline_timer> t;
-	bool response();
+class RequestManager;
+
+/**
+ * Abstract request handler. Inherit it
+ */
+class Handler {
+	std::ostringstream out_;
+	std::ostringstream header_;
+	virtual void doHandle() = 0;
+	/**
+	 * You can write headers for base classes and so
+	 * Empty by default
+	 */
+	virtual void beforeHandle();
+	// non copy
+	Handler(const Handler&);
+	Handler& operator=(const Handler&);
+protected:
+	void addHeader(const std::string& key, const std::string& value);
+	std::ostream& out() { return out_; }
 public:
 	Handler();
-	virtual ~Handler();
+	virtual ~Handler() = 0;
+	void handle(RequestManager& requestManager);
 };
 
-} // namespace tride
+} // namespace tride;
 
 #endif /* HANDLER_HPP_ */

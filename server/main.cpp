@@ -5,9 +5,11 @@
 #include <boost/thread.hpp>
 #include <csignal>
 
-#include "handler.hpp"
+#include "request_manager.hpp"
 #include "fcgi_server.hpp"
 #include "signals.hpp"
+#include "echo_handler.hpp"
+#include "handler_factory.hpp"
 
 void error_log(const char* msg) {
 	using namespace std;
@@ -23,6 +25,7 @@ void error_log(const char* msg) {
 int main() {
 	using namespace tride;
 	Signals::init();
+	RequestManager::registerHandler("echo", getFactory<EchoHandler>());
 	std::cout << "I'am started now" << std::endl;
 	try {
 		FcgiServer server;
