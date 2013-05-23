@@ -68,4 +68,8 @@ HandlerPtr RequestManager::createHandler(const std::string& path) {
 	return range.first->second();
 }
 
+void RequestManager::errorHandler(const std::exception& error) {
+	std::cout << "Internal error " << error.what() << std::endl;
+}
+
 } // namespace tride

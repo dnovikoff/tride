@@ -13,6 +13,7 @@ class RequestManager;
 class Handler {
 	std::ostringstream out_;
 	std::ostringstream header_;
+	const char * data;
 	virtual void doHandle() = 0;
 	/**
 	 * You can write headers for base classes and so
@@ -25,6 +26,7 @@ class Handler {
 protected:
 	void addHeader(const std::string& key, const std::string& value);
 	std::ostream& out() { return out_; }
+	const char * getData();
 public:
 	Handler();
 	virtual ~Handler() = 0;

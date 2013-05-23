@@ -2,25 +2,30 @@
 <head>
 <script src="jquery-1.9.1.min.js"></script>
 <script>
-function act() {
 var yourJSONObject = {action:'x',params:['a','b','c']};
-$.ajax('http://127.0.0.1/echo',{
-    'data': JSON.stringify(yourJSONObject),
-    'type': 'POST',
-    'contentType': 'application/json',
-    'success': function(x) { alert("Ok: " + JSON.stringify(x)); },
-    'error': function(x) { alert("Error: " + JSON.stringify(x)); },
-});
+function act() {
+$.post('http://127.0.0.1/echo',{
+    'data': JSON.stringify(yourJSONObject)},
+    onAjaxSuccess
+);
+}
+
+function act1() {
+$.post('http://127.0.0.1/echo',
+	{'data1': JSON.stringify(yourJSONObject)},
+    onAjaxSuccess
+);
 }
 
 function onAjaxSuccess(data)
 {
   // Здесь мы получаем данные, отправленные сервером и выводим их на экран.
-  alert(data);
+  alert( JSON.stringify(data) );
 }
 </script>
 </head>
 <body>
-<a href="javascript: act()"> hello </a>
+<a href="javascript: act()">act</a><br>
+<a href="javascript: act1()">act1</a>
 </body>
 </html>

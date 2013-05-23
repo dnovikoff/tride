@@ -3,7 +3,11 @@
 namespace tride {
 
 void EchoHandler::doHandle() {
-	out() << "Hello! World";
+	if(getData()) {
+		out() << getData();
+	} else {
+		out() << "{\"message\": \"no data posted\"}";
+	}
 }
 
 } // namespace tride

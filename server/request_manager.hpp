@@ -17,6 +17,7 @@ public:
 	virtual ~RequestManager();
 	static void registerHandler(const std::string& path, HandlerFactory);
 	static HandlerPtr createHandler(const std::string& path);
+	void errorHandler(const std::exception& error) override;
 };
 
 } // namespace tride
