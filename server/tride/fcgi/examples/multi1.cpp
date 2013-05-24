@@ -1,5 +1,10 @@
-#include <iostream>
+/**
+ * In this example the request is accepted and proccesed by multiple thread
+ * Every thread works the requests whole cycle ( from accepting till returning result)
+ * A server accepts 5 requests and dies
+ */
 
+#include <iostream>
 #include <boost/thread.hpp>
 
 #include <tride/fcgi/exceptions.hpp>

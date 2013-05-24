@@ -2,6 +2,12 @@
 
 #include <boost/thread.hpp>
 #include <boost/asio.hpp>
+/**
+ * In this example the request is accepted by a main thread and processed by mutiple threads
+ * The number of processing threads could be any
+ * A server accepts 5 requests and dies
+ */
+
 #include <boost/make_shared.hpp>
 
 #include <tride/fcgi/exceptions.hpp>
@@ -22,7 +28,7 @@ int mainBody() {
 	{
 		boost::asio::io_service::work work( io );
 
-		for(size_t i = 0; i < 5; ++i) {
+		for(size_t i = 0; i < 3; ++i) {
 			tg.create_thread(boost::bind(&boost::asio::io_service::run, &io));
 		}
 

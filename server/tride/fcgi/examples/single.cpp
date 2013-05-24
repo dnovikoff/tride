@@ -1,3 +1,8 @@
+/**
+ * In this example the request is accepted and proccesed by a single thread
+ * A server accepts 5 requests and dies
+ */
+
 #include <iostream>
 #include <tride/fcgi/exceptions.hpp>
 #include <tride/fcgi/request.hpp>
