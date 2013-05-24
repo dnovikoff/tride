@@ -4,7 +4,7 @@
 #include <boost/asio.hpp>
 #include <fastcgi++/manager.hpp>
 
-#include "request_manager.hpp"
+#include <tride/request_manager.hpp>
 
 namespace tride {
 

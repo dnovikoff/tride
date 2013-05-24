@@ -5,7 +5,7 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/asio/deadline_timer.hpp>
 #include <fastcgi++/request.hpp>
-#include "handler_factory.hpp"
+#include <tride/handler_factory.hpp>
 
 namespace tride {
 

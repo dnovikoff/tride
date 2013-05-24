@@ -1,7 +1,7 @@
 #ifndef JSON_HANDLER_HPP_
 #define JSON_HANDLER_HPP_
 
-#include "handler.hpp"
+#include <tride/handler.hpp>
 
 namespace tride {
 

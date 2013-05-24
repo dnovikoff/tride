@@ -16,7 +16,7 @@ lib fastcgipp : : <name>fastcgipp : <link>static ;
 lib b_system : : <name>boost_system-mt ;
 lib b_thread : : <name>boost_thread ;
 
-exe main : [ glob *.cpp ] fastcgipp b_system b_thread ;
+exe main : [ glob tride/*.cpp ] fastcgipp b_system b_thread ;
 
 install dist : main : <location>build/ ;
 

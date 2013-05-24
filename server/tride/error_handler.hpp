@@ -2,7 +2,7 @@
 #define ERROR_HANDLER_HPP_
 
 #include <string>
-#include "handler.hpp"
+#include <tride/handler.hpp>
 
 namespace tride {
 
