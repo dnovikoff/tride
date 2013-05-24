@@ -15,6 +15,9 @@ lib fastcgipp : : <name>fastcgipp : <link>static ;
 
 lib b_system : : <name>boost_system-mt ;
 lib b_thread : : <name>boost_thread ;
+lib ut : : <name>boost_unit_test_framework : <link>static ;
+
+alias fcgi : tride/fcgi//fcgi ;
 
 exe main : [ glob tride/*.cpp ] fastcgipp b_system b_thread ;
 

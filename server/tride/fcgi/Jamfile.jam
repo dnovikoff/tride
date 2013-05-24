@@ -1,0 +1,7 @@
+lib fcgic : : <name>fcgi : <link>static ;
+
+lib fcgi : [ glob *.cpp ] fcgic : <link>static ;
+
+lib ut : : <name>boost_unit_test_framework : <link>static ; # remove this duplicate
+
+unit-test datatest : tests/data.cpp ut fcgi ;
