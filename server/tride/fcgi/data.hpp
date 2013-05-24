@@ -16,22 +16,30 @@ class Data {
 	const char * data;
 	size_t len;
 public:
-	explicit Data(const char * const d);
+	/**
+	 * @param data Zero-terminated string or NULL
+	 */
+	explicit Data(const char * const data);
 	Data(const char * const d, const size_t l);
+
 	bool isNull() const { return data == NULL; }
 	const char * getData() const { return data; }
 	size_t getLength() const { return len; }
+
 	bool operator==(const Data& rhs) const;
-	inline bool operator==(const char* rdata) const { return operator==(Data(rdata)); }
-	inline bool operator==(const std::string& x) const { return operator==(x.c_str()); }
+	bool operator==(const char* rdata) const { return operator==(Data(rdata)); }
+	bool operator==(const std::string& x) const { return operator==(Data(x.c_str(), x.length())); }
 
 	template<typename T>
-	inline bool operator!=(const T& rhs) const { return !operator==(rhs); }
-	std::string toString() const { return std::string(data, len); }
-	static const Data& nullData() {
-		static Data nullData_(NULL, 0);
-		return nullData_;
-	}
+	bool operator!=(const T& rhs) const { return !operator==(rhs); }
+
+	/**
+	 * Creates a string object, based on data and its length
+	 * Do not call on null data (assert inside)
+	 */
+	std::string toString() const;
+
+	static const Data& nullData();
 };
 
 }  // namespace fcgi

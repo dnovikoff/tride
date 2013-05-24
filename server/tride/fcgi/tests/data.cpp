@@ -93,8 +93,15 @@ BOOST_AUTO_TEST_CASE( data_comparation ) {
 		BOOST_CHECK( Data("Hello")  != std::string("Hello!") );
 		BOOST_CHECK( Data("Hello!") != std::string("Hello") );
 		BOOST_CHECK( Data("Hello!", 5u) == std::string("Hello") );
+		BOOST_CHECK( Data("Hello!\0World", 12u) == std::string("Hello!\0World", 12u) );
 		BOOST_CHECK( Data::nullData() != std::string("Hello") );
 		BOOST_CHECK( Data::nullData() != std::string() );
+	}
+
+	{ // Comparing Data objects, based on same data segment
+		const char * const message = "Hello World!";
+		BOOST_CHECK( Data(message) == Data(message));
+		BOOST_CHECK( Data(message) != Data(message, 5u));
 	}
 }
 
