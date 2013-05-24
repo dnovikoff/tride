@@ -2,6 +2,7 @@
 #define TRIDE_FCGI_DATA_HPP_
 
 #include <string>
+#include <ostream>
 
 namespace tride {
 namespace fcgi {
@@ -36,5 +37,6 @@ public:
 }  // namespace fcgi
 }  // namespace tride
 
+std::ostream& operator<<(std::ostream& out, const tride::fcgi::Data& data);
 
 #endif /* TRIDE_FCGI_DATA_HPP_ */

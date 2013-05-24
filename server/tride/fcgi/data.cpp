@@ -17,3 +17,10 @@ bool Data::operator==(const Data& rhs) const {
 
 }  // namespace fcgi
 }  // namespace tride
+
+std::ostream& operator<<(std::ostream& out, const tride::fcgi::Data& data) {
+	if(data.isNull()) {
+		return out << "<NULL>";
+	}
+	return out.write(data.getData(), data.getLength());
+}

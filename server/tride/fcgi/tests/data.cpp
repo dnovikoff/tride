@@ -97,3 +97,26 @@ BOOST_AUTO_TEST_CASE( data_comparation ) {
 		BOOST_CHECK( Data::nullData() != std::string() );
 	}
 }
+
+BOOST_AUTO_TEST_CASE( ostream_operator ) {
+	{
+		std::ostringstream out;
+		out << "Data=" << Data("");
+		BOOST_CHECK_EQUAL(out.str(), "Data=");
+	}
+	{
+		std::ostringstream out;
+		out << "Data=" << Data("Hello");
+		BOOST_CHECK_EQUAL(out.str(), "Data=Hello");
+	}
+	{
+		std::ostringstream out;
+		out << "Data=" << Data("Hello", 3u);
+		BOOST_CHECK_EQUAL(out.str(), "Data=Hel");
+	}
+	{
+		std::ostringstream out;
+		out << "Data=" << Data(NULL);
+		BOOST_CHECK_EQUAL(out.str(), "Data=<NULL>");
+	}
+}
