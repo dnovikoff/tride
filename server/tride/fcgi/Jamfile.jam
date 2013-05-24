@@ -3,5 +3,13 @@ lib fcgic : : <name>fcgi : <link>static ;
 lib fcgi : [ glob *.cpp ] fcgic : <link>static ;
 
 lib ut : : <name>boost_unit_test_framework : <link>static ; # remove this duplicate
+lib b_thread : : <name>boost_thread ;
+lib b_system : : <name>boost_system ;
+
+exe example_single : examples/single.cpp fcgi ;
+exe example_mutli1 : examples/multi1.cpp fcgi b_thread ;
+exe example_mutli2 : examples/multi2.cpp fcgi b_thread b_system ;
+
+alias examples : example_single example_mutli1 example_mutli2 ;
 
 unit-test datatest : tests/data.cpp ut fcgi ;

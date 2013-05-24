@@ -23,4 +23,5 @@ exe main : [ glob tride/*.cpp ] fastcgipp b_system b_thread ;
 
 install dist : main : <location>build/ ;
 
+install edist : tride/fcgi//examples : <location>build/ ;
 

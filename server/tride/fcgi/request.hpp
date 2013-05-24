@@ -6,8 +6,8 @@
 
 namespace tride {
 namespace fcgi {
+
 class Data;
-class Acceptor;
 
 class Request {
 	typedef Request self_t;
@@ -16,7 +16,8 @@ class Request {
 	Request& operator=(const Request&);
 
 	FCGX_Request request;
-	friend class Acceptor;
+	bool inited;
+	void free();
 public:
 	enum ContentType { POST, GET };
 
@@ -25,7 +26,7 @@ public:
 
 	self_t& operator<<(const char* const out);
 
-	inline self_t& operator<<(const std::string& str) { operator <<(str.c_str()); }
+	self_t& operator<<(const std::string& str) { return operator <<(str.c_str()); }
 
 	/**
 	 * Returns content, posted with request (after header ends)
@@ -43,10 +44,15 @@ public:
 	 * Returns content type. Witch could be POST/GET
 	 */
 	ContentType getContentType();
+
+	/**
+	 * Is accepted
+	 */
+	bool accept();
+	static void Init();
 };
 
-}  // namespace fcgi
-}  // namespace tride
-
+} // namespace fcgi
+} // namespace tride
 
 #endif /* TRIDE_FCGI_REQUEST_HPP_ */
