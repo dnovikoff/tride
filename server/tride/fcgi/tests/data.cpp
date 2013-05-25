@@ -6,6 +6,7 @@
 #include <tride/fcgi/data.hpp>
 
 using namespace tride::fcgi;
+
 /**
  * This test checks how the data is constructed
  */
@@ -59,6 +60,10 @@ BOOST_AUTO_TEST_CASE( data_initialization ) {
 	}
 }
 
+
+/**
+ * Checking correctness of comparation (==,!=)
+ */
 BOOST_AUTO_TEST_CASE( data_comparation ) {
 	{
 		Data d(NULL);
@@ -105,6 +110,9 @@ BOOST_AUTO_TEST_CASE( data_comparation ) {
 	}
 }
 
+/**
+ * ostream operator<< checking
+ */
 BOOST_AUTO_TEST_CASE( ostream_operator ) {
 	{
 		std::ostringstream out;
