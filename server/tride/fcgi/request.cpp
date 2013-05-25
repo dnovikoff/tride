@@ -1,8 +1,27 @@
+#include <iostream>
 #include "request.hpp"
 #include "exceptions.hpp"
 
 namespace tride {
 namespace fcgi {
+
+namespace {
+
+// Designed to be only one static member
+class LibraryInitializer {
+	// Non copy
+	LibraryInitializer(const LibraryInitializer&);
+	LibraryInitializer& operator=(const LibraryInitializer&);
+public:
+	LibraryInitializer() {
+		auto r = FCGX_Init();
+		if( r != 0 ) {
+			throw Exception("Failed to initialize fcgi");
+		}
+	}
+};
+
+}
 
 Request::Request():inited(false) {}
 
@@ -18,33 +37,25 @@ Request::~Request() {
 }
 
 bool Request::accept() {
+	// One time library init on first request
+	static LibraryInitializer initializer;
 	free();
-	auto initResult = FCGX_InitRequest(&request, 0, 0);
+	auto initResult = FCGX_InitRequest(&request, 0, FCGI_FAIL_ACCEPT_ON_INTR);
 	if( initResult != 0 ) {
 		throw Exception("Request failed to initialize");
 	}
-	auto acceptResult = FCGX_Accept_r(&request);
-	if( acceptResult != 0 ) {
-		throw Exception("Failed to accept request");
-	}
+	if(FCGX_Accept_r(&request) != 0) return false;
 	inited = true;
 	return true;
-}
-
-void Request::Init() {
-	static bool initialized = false;
-	if( initialized ) {
-		throw std::logic_error("fcgi already initialized");
-	}
-	auto r = FCGX_Init();
-	if( r != 0 ) {
-		throw Exception("Failed to initialize fcgi");
-	}
 }
 
 Request& Request::operator<<(const char* const out) {
 	FCGX_PutS(out, request.out);
 	return *this;
+}
+
+void Request::setExitStatus(int code) {
+	FCGX_SetExitStatus (code, request.out);
 }
 
 } // namespace fcgi

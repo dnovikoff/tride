@@ -15,31 +15,69 @@
 
 using namespace tride::fcgi;
 
+namespace {
+
+typedef void Func(int);
+void installSignal(int signo, Func* func) {
+	struct sigaction act, old_act;
+	sigemptyset(&act.sa_mask);
+	act.sa_flags = 0;
+	act.sa_handler = func;
+	sigaction(signo, &act, &old_act);
+}
+
+
+void signalHandler( int signum ) {
+//	signal(SIGINT, oldSignalHandler);
+	std::cout << "Interrupt signal (" << signum << ") received.\n";
+}
+
+void initSignals() {
+	installSignal(SIGINT, signalHandler);
+//	oldSignalHandler = signal(SIGINT, signalHandler);
+//	if( oldSignalHandler == SIG_ERR) {
+//		oldSignalHandler = NULL;
+//		throw std::runtime_error("Error setting up signal handlers");
+//	}
+}
+
+} // namespace
+
 void run(const boost::shared_ptr<Request>& r) {
 	*r << "Content-type: text/html\r\n\r\nHello World!";
 	std::cout << "Done" << std::endl;
 }
 
 int mainBody() {
-	Request::Init();
+	initSignals();
 	boost::thread_group tg;
 	boost::asio::io_service io;
 
 	{
 		boost::asio::io_service::work work( io );
 
-		for(size_t i = 0; i < 3; ++i) {
+		const size_t numberOfThreads = 3;
+
+		// We will start 3 threads, to process task, posted at io
+		for(size_t i = 0; i < numberOfThreads; ++i) {
 			tg.create_thread(boost::bind(&boost::asio::io_service::run, &io));
 		}
 
-		for(size_t i = 0; i < 5; ++i) {
+		size_t i = 0;
+		while(1) {
 			boost::shared_ptr<Request> r = boost::make_shared<Request>();
-			std::cout << "Acception request " << i << std::endl;
-			r->accept();
+			std::cout << "Acception request " << ++i << std::endl;
+			if( !r->accept() ) {
+				std::cout << "Server stopped" << std::endl;
+				break;
+			}
 			io.post(boost::bind(&run, r));
 		}
+		// No new reqests are accepted at this point
+		// The io_service::work objects destructs here. The io.run(s) will exit, when all run out of tasks
 	}
 	std::cout << "Waiting for exit" << std::endl;
+	// Waiting untill will run out of task and all thread will exit
 	tg.join_all();
 	std::cout << "Exit" << std::endl;
 	return 0;

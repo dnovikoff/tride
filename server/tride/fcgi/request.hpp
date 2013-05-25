@@ -46,10 +46,11 @@ public:
 	ContentType getContentType();
 
 	/**
-	 * Is accepted
+	 * Returns true if request accepted.
+	 * Returns false if error occures (i.e. server stopped)
 	 */
 	bool accept();
-	static void Init();
+	void setExitStatus(int code);
 };
 
 } // namespace fcgi
