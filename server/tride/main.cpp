@@ -3,7 +3,6 @@
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
 #include <boost/thread.hpp>
-#include <csignal>
 
 #include "request_manager.hpp"
 #include "fcgi_server.hpp"
