@@ -50,6 +50,14 @@ public:
 	 * Returns false if error occures (i.e. server stopped)
 	 */
 	bool accept();
+
+	typedef void SingalFunction(int);
+
+	/**
+	 * Correct installer of signal handlers (to support accept interruption on signal)
+	 * example: installSignal(SIGINT, signalHandler);
+	 */
+	static void installSignal(int signo, SingalFunction* func);
 };
 
 } // namespace fcgi

@@ -54,5 +54,13 @@ Request& Request::operator<<(const char* const out) {
 	return *this;
 }
 
+void Request::installSignal(int signo, SingalFunction* func) {
+	struct sigaction act, old_act;
+	sigemptyset(&act.sa_mask);
+	act.sa_flags = 0;
+	act.sa_handler = func;
+	sigaction(signo, &act, &old_act);
+}
+
 } // namespace fcgi
 } // namespace tride

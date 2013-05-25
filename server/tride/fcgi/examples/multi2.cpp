@@ -17,28 +17,12 @@ using namespace tride::fcgi;
 
 namespace {
 
-typedef void Func(int);
-void installSignal(int signo, Func* func) {
-	struct sigaction act, old_act;
-	sigemptyset(&act.sa_mask);
-	act.sa_flags = 0;
-	act.sa_handler = func;
-	sigaction(signo, &act, &old_act);
-}
-
-
 void signalHandler( int signum ) {
-//	signal(SIGINT, oldSignalHandler);
 	std::cout << "Interrupt signal (" << signum << ") received.\n";
 }
 
 void initSignals() {
-	installSignal(SIGINT, signalHandler);
-//	oldSignalHandler = signal(SIGINT, signalHandler);
-//	if( oldSignalHandler == SIG_ERR) {
-//		oldSignalHandler = NULL;
-//		throw std::runtime_error("Error setting up signal handlers");
-//	}
+	Request::installSignal(SIGINT, signalHandler);
 }
 
 } // namespace
