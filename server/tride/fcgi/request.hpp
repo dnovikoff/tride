@@ -50,7 +50,6 @@ public:
 	 * Returns false if error occures (i.e. server stopped)
 	 */
 	bool accept();
-	void setExitStatus(int code);
 };
 
 } // namespace fcgi

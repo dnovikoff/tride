@@ -54,9 +54,5 @@ Request& Request::operator<<(const char* const out) {
 	return *this;
 }
 
-void Request::setExitStatus(int code) {
-	FCGX_SetExitStatus (code, request.out);
-}
-
 } // namespace fcgi
 } // namespace tride
