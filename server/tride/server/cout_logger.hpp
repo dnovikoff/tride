@@ -5,6 +5,10 @@
 
 namespace tride {
 
+/**
+ * Writes to std::cout
+ * Thread safe (mutex locking inside)
+ */
 class CoutLogger:public log::Logger {
 	void doWrite(const log::LogLevel level, const std::string& msg) override;
 };

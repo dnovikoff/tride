@@ -51,6 +51,7 @@ public:
 	 * Can throw an exeption if:
 	 * 1) fcgi library fails to initialize
 	 * 2) or Reqest failed to initialize
+	 * Note that using accept from different threads could be not thread safe (even for different objects)
 	 */
 	bool accept();
 
