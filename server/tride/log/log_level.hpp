@@ -7,6 +7,11 @@ namespace log {
 
 enum LogLevel { FATAL=1, ERROR, WARNING, INFO, DEBUG, TRACE };
 
+/**
+ * Get human readable name of log level
+ */
+const char* logLevelName(const LogLevel code);
+
 }  // namespace log
 }  // namespace tride
 
