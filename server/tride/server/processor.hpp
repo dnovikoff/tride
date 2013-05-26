@@ -32,8 +32,17 @@ class Processor {
 public:
 	typedef boost::function<void(void)> task_t;
 
-	Processor(log::Logger& l):logger(l) {}
+	/**
+	 * @param where to log
+	 */
+	explicit Processor(log::Logger& l):logger(l) {}
 
+	/**
+	 * Creates a callback to call runForPtr.
+	 * This used to be posted to io_service
+	 * This object must exist when the task will be executed!
+	 * @param request to bind
+	 */
 	task_t task(const RequestPtr& r);
 };
 
