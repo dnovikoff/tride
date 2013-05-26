@@ -17,16 +17,10 @@ namespace {
 class TestMessage {
 	LogLevel level;
 	std::string message;
-
-	const std::string& levelStr(const LogLevel level) {
-		static std::string noteTxt("NTE");
-		static std::string errorTxt("ERR");
-		return level == LogLevel::ERROR? errorTxt : noteTxt;
-	}
 public:
 	TestMessage(const LogLevel l, const std::string& m):level(l), message(m) {}
 	void print() {
-		std::cout << "[Message " << levelStr(level) << "] " << message << std::endl;
+		std::cout << "[Level=" << level << "] " << message << std::endl;
 	}
 	bool operator==(const TestMessage& rhs) const {
 		if(level != rhs.level) return false;
@@ -67,10 +61,12 @@ bool compareAndPrint(const MessageList& messages, const MessageList& ethalon) {
 
 class TestLogger: public Logger {
 	MessageList messages;
-public:
-	void write(const LogLevel level, const std::string& message) override {
+
+	void doWrite(const LogLevel level, const std::string& message) override {
 		messages.push_back(TestMessage(level, message));
 	}
+public:
+	TestLogger(const LogLevel th = defaultThreshold()):Logger(th) {}
 	const MessageList& getMessages() const { return messages; }
 	void clear() { messages.clear(); }
 };
@@ -81,16 +77,16 @@ int throwException() {
 
 } // namespace
 
-BOOST_AUTO_TEST_CASE( logger ) {
+BOOST_AUTO_TEST_CASE( basic ) {
 	{
 		TestLogger logger;
 		logger << "Hello!";
 		MessageList et;
-		et += TestMessage(LogLevel::NOTE, "Hello!");
+		et += TestMessage(LogLevel::INFO, "Hello!");
 		BOOST_CHECK( compareAndPrint( logger.getMessages(), et) );
 		logger.clear();
 		BOOST_REQUIRE( logger.getMessages().empty() );
-		logger.note() << "Hello!";
+		logger.info() << "Hello!";
 	}
 	{
 		TestLogger logger;
@@ -101,20 +97,20 @@ BOOST_AUTO_TEST_CASE( logger ) {
 	}
 	{
 		TestLogger logger;
-		logger.note() << "Hello!";
+		logger.info() << "Hello!";
 		logger.error() << "World!";
 		MessageList et;
-		et += TestMessage(LogLevel::NOTE, "Hello!");
+		et += TestMessage(LogLevel::INFO, "Hello!");
 		et += TestMessage(LogLevel::ERROR, "World!");
 		BOOST_CHECK( compareAndPrint( logger.getMessages(), et) );
 	}
 	// Check for exeption, while constructing output
 	{
 		TestLogger logger;
-		BOOST_CHECK_THROW( logger.note() << "Hello " << throwException() << " World", std::runtime_error );
+		BOOST_CHECK_THROW( logger.info() << "Hello " << throwException() << " World", std::runtime_error );
 		MessageList et;
 		BOOST_CHECK( compareAndPrint( logger.getMessages(), et) );
-		BOOST_CHECK_THROW( logger.note() << throwException(), std::runtime_error );
+		BOOST_CHECK_THROW( logger.info() << throwException(), std::runtime_error );
 		BOOST_CHECK( compareAndPrint( logger.getMessages(), et) );
 	}
 	{
@@ -123,21 +119,96 @@ BOOST_AUTO_TEST_CASE( logger ) {
 			throw std::runtime_error("test");
 		} catch(const std::runtime_error& x) {
 			TestLogger logger;
-			logger.write(LogLevel::NOTE, "Hello");
+			logger.write(LogLevel::INFO, "Hello");
 			MessageList et;
-			et += TestMessage(LogLevel::NOTE, "Hello");
+			et += TestMessage(LogLevel::INFO, "Hello");
 			BOOST_CHECK( compareAndPrint( logger.getMessages(), et) );
 		}
 	}
 	// Direct write
 	{
 		TestLogger logger;
-		logger.write(LogLevel::NOTE, "Hello");
+		logger.write(LogLevel::INFO, "Hello");
 		logger.write(LogLevel::ERROR, "World");
 
 		MessageList et;
-		et += TestMessage(LogLevel::NOTE, "Hello");
+		et += TestMessage(LogLevel::INFO, "Hello");
 		et += TestMessage(LogLevel::ERROR, "World");
+		BOOST_CHECK( compareAndPrint( logger.getMessages(), et) );
+	}
+}
+
+BOOST_AUTO_TEST_CASE( checkLevel ) {
+	{
+		TestLogger logger;
+		BOOST_CHECK( logger.checkLevel(LogLevel::FATAL) );
+		BOOST_CHECK( logger.checkLevel(LogLevel::ERROR) );
+		BOOST_CHECK( logger.checkLevel(LogLevel::WARNING) );
+		BOOST_CHECK( logger.checkLevel(LogLevel::INFO) );
+		BOOST_CHECK( !logger.checkLevel(LogLevel::DEBUG) );
+		BOOST_CHECK( !logger.checkLevel(LogLevel::TRACE) );
+	}
+	{
+		TestLogger logger(LogLevel::FATAL);
+		BOOST_CHECK( logger.checkLevel(LogLevel::FATAL) );
+		BOOST_CHECK( !logger.checkLevel(LogLevel::ERROR) );
+		BOOST_CHECK( !logger.checkLevel(LogLevel::WARNING) );
+		BOOST_CHECK( !logger.checkLevel(LogLevel::INFO) );
+		BOOST_CHECK( !logger.checkLevel(LogLevel::DEBUG) );
+		BOOST_CHECK( !logger.checkLevel(LogLevel::TRACE) );
+	}
+}
+
+BOOST_AUTO_TEST_CASE( threshold ) {
+	{
+		TestLogger logger(LogLevel::WARNING);
+		logger.error()    << "error";
+		logger.info()    << "info";
+		logger.warning() << "warning";
+		logger.trace()   << "trace";
+		logger.debug()   << "debug";
+		logger.fatal()   << "fatal";
+
+		MessageList et;
+		et += TestMessage(LogLevel::ERROR, "error");
+		et += TestMessage(LogLevel::WARNING, "warning");
+		et += TestMessage(LogLevel::FATAL, "fatal");
+		BOOST_CHECK( compareAndPrint( logger.getMessages(), et) );
+	}
+	// Default level test
+	{
+		TestLogger logger;
+		logger.error()    << "error";
+		logger.info()    << "info";
+		logger.warning() << "warning";
+		logger.trace()   << "trace";
+		logger.debug()   << "debug";
+		logger.fatal()   << "fatal";
+
+		MessageList et;
+		et += TestMessage(LogLevel::ERROR, "error");
+		et += TestMessage(LogLevel::INFO, "info");
+		et += TestMessage(LogLevel::WARNING, "warning");
+		et += TestMessage(LogLevel::FATAL, "fatal");
+		BOOST_CHECK( compareAndPrint( logger.getMessages(), et) );
+	}
+	// All levels test
+	{
+		TestLogger logger(LogLevel::TRACE);
+		logger.error()    << "error";
+		logger.info()    << "info";
+		logger.warning() << "warning";
+		logger.trace()   << "trace";
+		logger.debug()   << "debug";
+		logger.fatal()   << "fatal";
+
+		MessageList et;
+		et += TestMessage(LogLevel::ERROR, "error");
+		et += TestMessage(LogLevel::INFO, "info");
+		et += TestMessage(LogLevel::WARNING, "warning");
+		et += TestMessage(LogLevel::TRACE, "trace");
+		et += TestMessage(LogLevel::DEBUG, "debug");
+		et += TestMessage(LogLevel::FATAL, "fatal");
 		BOOST_CHECK( compareAndPrint( logger.getMessages(), et) );
 	}
 }

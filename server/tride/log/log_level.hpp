@@ -5,7 +5,7 @@
 namespace tride {
 namespace log {
 
-enum LogLevel { NOTE=1, ERROR };
+enum LogLevel { FATAL=1, ERROR, WARNING, INFO, DEBUG, TRACE };
 
 }  // namespace log
 }  // namespace tride
