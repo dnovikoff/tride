@@ -48,6 +48,9 @@ public:
 	/**
 	 * Returns true if request accepted.
 	 * Returns false if error occures (i.e. server stopped)
+	 * Can throw an exeption if:
+	 * 1) fcgi library fails to initialize
+	 * 2) or Reqest failed to initialize
 	 */
 	bool accept();
 
