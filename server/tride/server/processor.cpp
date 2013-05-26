@@ -8,7 +8,7 @@
 namespace tride {
 
 void Processor::run(fcgi::Request& request) {
-	logger << "Processing new request";
+	logger.trace() << "Processing new request";
 	request << "Content-type: text/html\r\n\r\nHello v2";
 }
 

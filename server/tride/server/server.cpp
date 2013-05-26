@@ -19,7 +19,7 @@ log::Logger* currentLogger = NULL;
 void signalHandler( int signum ) {
 	boost::mutex::scoped_lock l(currentLoggerMutex);
 	if(currentLogger) {
-		(*currentLogger) << "Interrupt signal (" << signum << ") received.";
+		currentLogger->trace() << "Interrupt signal (" << signum << ") received.";
 	}
 }
 
@@ -27,6 +27,7 @@ void initSignals() {
 	static bool signalsInited = false;
 	if(!signalsInited) {
 		fcgi::Request::installSignal(SIGINT, signalHandler);
+		fcgi::Request::installSignal(SIGTERM, signalHandler);
 	}
 	signalsInited = true;
 }
@@ -43,9 +44,8 @@ void Server::run(const size_t numberOfThreads) {
 		currentLogger = &logger;
 	}
 
-	logger << "Server started";
+	logger.trace() << "Initializing signals";
 	initSignals();
-	logger << "Signals initialized";
 	boost::thread_group tg;
 
 	{
@@ -55,12 +55,12 @@ void Server::run(const size_t numberOfThreads) {
 		for(size_t i = 0; i < numberOfThreads; ++i) {
 			tg.create_thread(boost::bind(&boost::asio::io_service::run, &io));
 		}
-
+		logger << "Server started";
 		while(1) {
 			auto r = boost::make_shared<fcgi::Request>();
-			logger << "Accepting new request";
+			logger.trace() << "Accepting new request";
 			if( !r->accept() ) {
-				logger << "Server stopped";
+				logger << "Server shutting down";
 				break;
 			}
 			postTask( processor.task(r) );
@@ -68,7 +68,7 @@ void Server::run(const size_t numberOfThreads) {
 		// No new reqests are accepted at this point
 		// The io_service::work objects destructs here. The io.run(s) will exit, when all run out of tasks
 	}
-	logger << "Waiting for all threads to exit";
+	logger.trace() << "Waiting for all threads to exit";
 	// Waiting untill will run out of task and all thread will exit
 	tg.join_all();
 	logger << "Server stopped";
