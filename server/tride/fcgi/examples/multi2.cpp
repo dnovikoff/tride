@@ -18,7 +18,7 @@ using namespace tride::fcgi;
 namespace {
 
 void signalHandler( int signum ) {
-	std::cout << "Interrupt signal (" << signum << ") received.\n";
+	std::cout << "Interrupt signal (" << signum << ") received." << std::endl;
 }
 
 void initSignals() {
