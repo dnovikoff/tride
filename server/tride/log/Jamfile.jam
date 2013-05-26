@@ -1,0 +1,5 @@
+lib ut : : <name>boost_unit_test_framework : <link>static ; # remove this duplicate
+
+lib log : [ glob *.cpp ] : <link>static ;
+
+unit-test loggertest : tests/logger.cpp ut log ;
