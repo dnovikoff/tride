@@ -17,9 +17,13 @@ lib b_system : : <name>boost_system-mt ;
 lib b_thread : : <name>boost_thread ;
 lib ut : : <name>boost_unit_test_framework : <link>static ;
 
-alias fcgi : tride/fcgi//fcgi ;
+build-project tride/fcgi ;
+build-project tride/log ;
 
-exe main : [ glob tride/*.cpp ] fastcgipp b_system b_thread ;
+alias fcgi : tride/fcgi//fcgi ;
+alias log  : tride/log//log ;
+
+exe main : tride/main.cpp [ glob tride/server/*.cpp ] fcgi log b_system b_thread ;
 
 install dist : main : <location>build/ ;
 
