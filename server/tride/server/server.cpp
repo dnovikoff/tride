@@ -4,18 +4,23 @@
 #include <boost/make_shared.hpp>
 
 #include <tride/fcgi/request.hpp>
-#include <tride/server/cout_logger.hpp>
+#include <tride/log/logger.hpp>
 
+#include "processor.hpp"
 #include "server.hpp"
 
 namespace tride {
 
 namespace {
 
-CoutLogger* currentLogger = NULL;
+static boost::mutex currentLoggerMutex;
+log::Logger* currentLogger = NULL;
 
 void signalHandler( int signum ) {
-	(*currentLogger) << "Interrupt signal (" << signum << ") received.";
+	boost::mutex::scoped_lock l(currentLoggerMutex);
+	if(currentLogger) {
+		(*currentLogger) << "Interrupt signal (" << signum << ") received.";
+	}
 }
 
 void initSignals() {
@@ -32,9 +37,11 @@ void Server::postTask(const task_t& callback) {
 	io.post( callback );
 }
 
-void Server::run(const size_t numberOfThreads, const callback_t& callback) {
-	CoutLogger logger;
-	currentLogger = &logger;
+void Server::run(const size_t numberOfThreads) {
+	{
+		boost::mutex::scoped_lock l(currentLoggerMutex);
+		currentLogger = &logger;
+	}
 
 	logger << "Server started";
 	initSignals();
@@ -56,7 +63,7 @@ void Server::run(const size_t numberOfThreads, const callback_t& callback) {
 				logger << "Server stopped";
 				break;
 			}
-			postTask( boost::bind(callback, r) );
+			postTask( processor.task(r) );
 		}
 		// No new reqests are accepted at this point
 		// The io_service::work objects destructs here. The io.run(s) will exit, when all run out of tasks
@@ -65,6 +72,10 @@ void Server::run(const size_t numberOfThreads, const callback_t& callback) {
 	// Waiting untill will run out of task and all thread will exit
 	tg.join_all();
 	logger << "Server stopped";
+	{
+		boost::mutex::scoped_lock l(currentLoggerMutex);
+		currentLogger = NULL;
+	}
 }
 
 }  // namespace tride
