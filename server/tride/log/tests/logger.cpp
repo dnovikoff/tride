@@ -117,6 +117,18 @@ BOOST_AUTO_TEST_CASE( logger ) {
 		BOOST_CHECK_THROW( logger.note() << throwException(), std::runtime_error );
 		BOOST_CHECK( compareAndPrint( logger.getMessages(), et) );
 	}
+	{
+		TestLogger logger;
+		try {
+			throw std::runtime_error("test");
+		} catch(const std::runtime_error& x) {
+			TestLogger logger;
+			logger.write(LogLevel::NOTE, "Hello");
+			MessageList et;
+			et += TestMessage(LogLevel::NOTE, "Hello");
+			BOOST_CHECK( compareAndPrint( logger.getMessages(), et) );
+		}
+	}
 	// Direct write
 	{
 		TestLogger logger;
