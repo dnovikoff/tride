@@ -212,3 +212,13 @@ BOOST_AUTO_TEST_CASE( threshold ) {
 		BOOST_CHECK( compareAndPrint( logger.getMessages(), et) );
 	}
 }
+
+BOOST_AUTO_TEST_CASE( outstream ) {
+	{
+		TestLogger logger;
+		logger << "Hello " << 123 << " World " << std::string("std::string");
+		MessageList et;
+		et += TestMessage(LogLevel::INFO, "Hello 123 World std::string");
+		BOOST_CHECK( compareAndPrint( logger.getMessages(), et) );
+	}
+}
