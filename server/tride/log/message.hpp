@@ -23,7 +23,10 @@ class Message {
 public:
 	template<typename T>
 	Message operator<<(const T& data) {
-		(*message) << data;
+		// Optimization. If the level check fails - nothing will be done.
+		if(message) {
+			(*message) << data;
+		}
 		// Return by value!
 		return *this;
 	}

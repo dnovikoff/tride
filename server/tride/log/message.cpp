@@ -9,6 +9,8 @@ namespace tride {
 namespace log {
 
 Message::Message(Logger& l, LogLevel level):logger(l), logLevel(level) {
+	// Optimizing
+	if( !l.checkLevel(level) ) return;
 	message = boost::make_shared<std::ostringstream>();
 }
 
@@ -19,8 +21,8 @@ void Message::write(const char* data, const size_t size) {
 Message::~Message() {
 	// Exception thrown, while constructing log message
 	if(std::uncaught_exception()) return;
-	if( !message.unique() ) return;
-
+	// Could be NULL!
+	if( !message || !message.unique() ) return;
 	// Message construction is over. We can now pass the message to logger
 	logger.write(logLevel, message->str());
 }
